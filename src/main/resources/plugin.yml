@@ -1,0 +1,4 @@
+name: InsonmiaT2
+version: '${project.version}'
+main: plugin.nicohaxz.main
+api-version: '1.20'
