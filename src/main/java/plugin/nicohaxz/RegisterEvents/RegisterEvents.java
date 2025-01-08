@@ -9,6 +9,8 @@ import plugin.nicohaxz.GameEvent.TotemListener;
 import plugin.nicohaxz.main;
 
 public class RegisterEvents {
+
+    //EVENTOS QUE NO SON PRIVADOS VAN ACA
         public static void loadListeners() {
             registerListeners(
                     new DeathEvent(),

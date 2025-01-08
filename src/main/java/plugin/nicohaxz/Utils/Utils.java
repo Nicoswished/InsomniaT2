@@ -173,7 +173,7 @@ public class Utils {
     }
 
     public static String getPrefix() {
-        return Utils.c("&8&l[" + Utils.ib(new java.awt.Color(238, 202, 20), new java.awt.Color(231, 144, 16), "&lTwilight Phase") + "&8&l]&r ");
+        return Utils.c("&8&l[" + Utils.ib(new java.awt.Color(10, 236, 228), new java.awt.Color(6, 169, 163), "&lInsomnia") + "&8&l]&r ");
     }
 
     public static String getLocationString(Location location) {

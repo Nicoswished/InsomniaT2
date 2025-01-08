@@ -18,7 +18,7 @@ import plugin.nicohaxz.Utils.Utils;
 public class Day1 implements Listener {
     @EventHandler
     public void onZombieSpawn(EntitySpawnEvent event) {
-        Utils.onDay(0, null, () -> {
+        Utils.onDay(1, null, () -> {
             if (event.getEntity() instanceof Zombie) {
                 Zombie zombie = (Zombie) event.getEntity();
                 ItemStack ironSword = new ItemStack(Material.IRON_SWORD);
@@ -31,8 +31,7 @@ public class Day1 implements Listener {
 
     @EventHandler
     public void onSpiderHit(EntityDamageByEntityEvent event) {
-        Utils.onDay(0, null, () -> {
-
+        Utils.onDay(1, null, () -> {
             if (event.getDamager() instanceof Spider && event.getEntity() instanceof Player) {
                 Player player = (Player) event.getEntity();
                 player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 100, 1));
@@ -42,7 +41,7 @@ public class Day1 implements Listener {
 
     @EventHandler
     public void onVillagerDamage(EntityDamageByEntityEvent event) {
-        Utils.onDay(0, null, () -> {
+        Utils.onDay(1, null, () -> {
             if (event.getEntity() instanceof Villager) {
                 double originalDamage = event.getDamage();
                 event.setDamage(originalDamage * 2);

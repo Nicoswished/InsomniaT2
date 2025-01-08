@@ -29,10 +29,11 @@ public class StormController implements Listener {
             for (Player pl : Bukkit.getOnlinePlayers()) {
                 pl.playSound(pl.getLocation(), Sound.AMBIENT_CAVE, 100, 0);
                 TormentaCountdown(pl, false);
-                int i = StormUtils.getMaxValue();
+                int maxValue = StormUtils.getMaxValue(pl);
+                int duration = StormUtils.getDuration(pl);
                 pl.sendTitle(Utils.c("<GRADIENT:06def4>&lFreeze Moon</GRADIENT:09909e>"),
-                        Utils.c("&5&l Duración: " + StormUtils.getDuration()),
-                        100, 20, 100);
+                        Utils.c("&5&l Duración: " + duration), 100, 20, 100);
+                System.out.println("Valor máximo de la tormenta: " + maxValue);
             }
         }, 180L);
     }
@@ -40,6 +41,7 @@ public class StormController implements Listener {
     public void TormentaCountdown(Player pl, Boolean isReloadCause) {
         pl.getWorld().setGameRule(GameRule.DO_DAYLIGHT_CYCLE, Boolean.FALSE);
         setMoonToMidnight(pl.getWorld());
+
         if (isReloadCause) {
             if (remainingTimeInSeconds > 0) {
                 startCountdown();
@@ -48,10 +50,14 @@ public class StormController implements Listener {
             if (remainingTimeInSeconds == 0) {
                 remainingTimeInSeconds = (int) interval;
                 maxDuration = interval;
+                StormUtils.setDuration(pl, remainingTimeInSeconds);
+                StormUtils.setMaxValue(pl, (int) maxDuration);
                 startCountdown();
             } else {
                 remainingTimeInSeconds += 2000;
                 maxDuration += 2000;
+                StormUtils.setDuration(pl, remainingTimeInSeconds);
+                StormUtils.setMaxValue(pl, (int) maxDuration);
             }
         }
     }
@@ -73,7 +79,6 @@ public class StormController implements Listener {
                     world.setTime(world.getTime() + increment);
                     counter++;
                 }
-                world.setTime(18000);
             }
         };
         task.runTaskTimer(main.getInstance(), 20L, 1L);
@@ -84,15 +89,20 @@ public class StormController implements Listener {
             @Override
             public void run() {
                 if (remainingTimeInSeconds <= 0) {
-                    Bukkit.getWorld("world").setGameRule(GameRule.DO_DAYLIGHT_CYCLE, true);
-                    Bukkit.getWorld("world").setStorm(false);
+                    World world = Bukkit.getWorld("world");
+                    if (world != null) {
+                        world.setGameRule(GameRule.DO_DAYLIGHT_CYCLE, true);
+                    }
+
                     for (Player pl : Bukkit.getOnlinePlayers()) {
                         pl.sendMessage(Utils.c("<GRADIENT:06def4>&lFreeze Moon ha terminado</GRADIENT:09909e>"));
-                        cancel();
-
+                        StormUtils.setDuration(pl, 0);
+                        StormUtils.setMaxValue(pl, 0);
                     }
+
                     remainingTimeInSeconds = 0;
                     maxDuration = 0;
+                    cancel();
                 } else {
                     for (Player pl : Bukkit.getOnlinePlayers()) {
                         String mensaje = IridiumColorAPI.process("<GRADIENT:06def4>&lFreeze Moon: </GRADIENT:09909e>"
@@ -103,13 +113,13 @@ public class StormController implements Listener {
                 }
             }
         };
+
         task.runTaskTimer(main.getInstance(), 20L, 20L);
     }
-
     @EventHandler
     public void Joinevent(PlayerJoinEvent event) {
-        if (remainingTimeInSeconds > 0) {
-            Player player = event.getPlayer();
+        Player player = event.getPlayer();
+        if (StormUtils.getDuration(player) > 0) {
             player.spigot().sendMessage(ChatMessageType.ACTION_BAR,
                     TextComponent.fromLegacyText(Utils.c("<GRADIENT:06def4>&lFreeze Moon Activa</GRADIENT:09909e>")));
         }
