@@ -8,6 +8,7 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntitySpawnEvent;
@@ -108,7 +109,24 @@ public class Day6 implements Listener {
         Utils.onDay(6, null, () -> {
             if (event.getEntity() instanceof Animals) {
                 Animals animal = (Animals) event.getEntity();
-                animal.getWorld().createExplosion(animal.getLocation(), 4.0f);
+                if (event.getDamager() instanceof Player) {
+                    animal.getWorld().createExplosion(animal.getLocation(), 4.0f);
+                }
+                else {
+                    animal.getWorld().createExplosion(animal.getLocation(), 4.0f);
+                }
+            }
+        });
+    }
+    @EventHandler
+    public void onCreatureSpawn(CreatureSpawnEvent event) {
+        Utils.onDay(6, null, () -> {
+            if (event.getEntityType() == EntityType.SPIDER) {
+                if (event.getEntity().getWorld().getEnvironment() == World.Environment.NORMAL) {
+                    Spider spider = (Spider) event.getEntity();
+                    CaveSpider caveSpider = (CaveSpider) spider.getWorld().spawnEntity(spider.getLocation(), EntityType.CAVE_SPIDER);
+                    event.setCancelled(true);
+                }
             }
         });
     }

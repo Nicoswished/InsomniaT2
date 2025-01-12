@@ -362,7 +362,6 @@ public class Utils {
     }
 
 
-
     private static void updateCooldown(ItemStack item, int seconds) {
         ItemMeta meta = item.getItemMeta();
         meta.getPersistentDataContainer().set(PDC.Key("cooldown"), PDC.INT, seconds);
@@ -485,5 +484,21 @@ public class Utils {
 
     public static String format(String msg) {
         return org.bukkit.ChatColor.translateAlternateColorCodes('&', msg);
+    }
+
+    public static String GetType(Entity p) {
+
+
+        if (PDC.EntityPDC(p).get(PDC.Key(ListHandler.mobtype()), PDC.STRING) == null) {
+
+
+            return "vanilla";
+        } else {
+
+
+            return (String) PDC.EntityPDC(p).get(PDC.Key(ListHandler.mobtype()), PDC.STRING);
+        }
+
+
     }
 }

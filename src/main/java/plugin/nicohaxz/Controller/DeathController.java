@@ -60,17 +60,8 @@ public class DeathController {
                     Utils.c("&8&k1 <GRADIENT:06def4>Insom</GRADIENT:09909e> &8&k2"), // Frame 21
                     Utils.c("&8&k1 <GRADIENT:06def4>Inso</GRADIENT:09909e> &8&k2"), // Frame 22 (distorsión)
                     Utils.c("&8&k1 <GRADIENT:06def4>Ins</GRADIENT:09909e> &8&k2"), // Frame 23 (distorsión)
-                    Utils.c("&8&k1 <GRADIENT:06def4>In</GRADIENT:09909e> &8&k2"), // Frame 24 (distorsión)
-                    Utils.c("&8&k1 <GRADIENT:06def4>I</GRADIENT:09909e> &8&k2"), // Frame 25 (distorsión)
-                    Utils.c("&8&k1 <GRADIENT:09a2e9>The Cold is Dangerous&k</GRADIENT:0967d1> &8&k2"), // Frame 26 (distorsión)
-                    Utils.c("&8&k1 <GRADIENT:09a2e9>The Cold is Dangerous</GRADIENT:0967d1> &8&k2"),
-                    Utils.c("&8&k1 <GRADIENT:09a2e9>The Cold is Dangerous</GRADIENT:0967d1> &8&k2"), // Frame 27
-                    Utils.c("&8&k1 <GRADIENT:09a2e9>The Cold is Dangerous"), // Frame 28
-                    Utils.c("&8&k1 <GRADIENT:be0505>Alert</GRADIENT:be0505> &8&k2"), // Frame 29
-                    Utils.c("&8&k1 <GRADIENT:09a2e9>The Cold is Dangerous</GRADIENT:0967d1> &8&k2"), // Frame 30
-                    Utils.c("&8&k1 <GRADIENT:be0505>Alert</GRADIENT:be0505> &8&k2"), // Frame 31
-                    Utils.c("&8&k1 <GRADIENT:09a2e9>The Cold is Dangerous</GRADIENT:0967d1> &8&k2"), // Frame 32
-                    Utils.c("&8&k1 &kAlert &8&k2</GRADIENT:be0505> &8&k2") // Frame 33 (Fin)
+                    Utils.c("&8&k1 <GRADIENT:06def4>In</GRADIENT:09909e> &8&k2"),
+                    Utils.c("&8&k1 <GRADIENT:06def4>I</GRADIENT:09909e> &8&k2"),
             };
             List.of(titles).
                     forEach(title -> chain.delay(100, TimeUnit.MILLISECONDS).

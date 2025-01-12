@@ -33,7 +33,7 @@ public class DeathEvent implements Listener {
     public void DeathMessage(PlayerDeathEvent event) {
         Player p = event.getEntity();
         for (Player pl : Bukkit.getOnlinePlayers()) {
-            pl.playSound(p.getLocation(), "minecraft:pn.muerte", 1.0F, 1.0F);
+            pl.playSound(p.getLocation(), "minecraft:insomnia.death", 1.0F, 1.0F);
             pl.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 100, 0));
             pl.addPotionEffect(new PotionEffect(PotionEffectType.CONFUSION, 200, 0));
             pl.sendMessage(Utils.chatcolor("&7Causa: &c" + Utils.getCustomCause(Objects.requireNonNull(p.getLastDamageCause()), "<SOLID:7FFF00>")));

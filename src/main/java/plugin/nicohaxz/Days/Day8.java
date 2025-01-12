@@ -14,7 +14,7 @@ import java.util.Random;
 public class Day8 implements Listener {
     @EventHandler
     public void onPlayerDamage(EntityDamageEvent event) {
-        Utils.onDay(7, null, () -> {
+        Utils.onDay(8, null, () -> {
             if (event.getEntity() instanceof Player) {
                 event.setDamage(event.getDamage() * 2);
             }
@@ -23,7 +23,7 @@ public class Day8 implements Listener {
 
     @EventHandler
     public void onBlockBreak(PlayerInteractEvent event) {
-        Utils.onDay(7, null, () -> {
+        Utils.onDay(8, null, () -> {
             if (event.getAction().toString().contains("BREAK")) {
                 if (event.getClickedBlock() != null) {
                     Material blockType = event.getClickedBlock().getType();

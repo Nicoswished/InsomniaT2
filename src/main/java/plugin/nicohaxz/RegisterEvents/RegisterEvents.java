@@ -15,7 +15,8 @@ public class RegisterEvents {
             registerListeners(
                     new DeathEvent(),
                     new TotemListener(),
-                    new StormController(),
+                    new SpawnMobsDays(),
+                    new MobCapDay10(),
                     new Day0(),
                     new Day1(),
                     new Day2(),
@@ -23,8 +24,20 @@ public class RegisterEvents {
                     new Day4(),
                     new Day5(),
                     new Day6(),
-                    new Day8()
-            );
+                    new Day8(),
+                    new Day9(),
+                    new Day11(),
+                    new Day12(),
+                    new Day13(),
+                    new Day14(),
+                    new Day16()
+
+
+
+
+
+
+                    );
         }
 
         private static void registerListeners(Listener... listeners) {

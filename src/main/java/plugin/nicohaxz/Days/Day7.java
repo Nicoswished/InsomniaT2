@@ -5,33 +5,33 @@ import org.bukkit.Material;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.EntityShootBowEvent;
-import org.bukkit.event.entity.EntitySpawnEvent;
+import org.bukkit.event.entity.*;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import plugin.nicohaxz.Utils.Utils;
 
+import java.util.Random;
+
+
 public class Day7 implements Listener {
+    private final Random random = new Random();
+
     @EventHandler
     public void onGhastFireball(EntityShootBowEvent event) {
         Utils.onDay(7, null, () -> {
             if (event.getEntity() instanceof Ghast) {
                 Fireball fireball = (Fireball) event.getProjectile();
-                fireball.setYield(3);
+                fireball.setYield(6);
             }
         });
     }
     @EventHandler
     public void onWitherSkeletonSpawn(EntitySpawnEvent event) {
         Utils.onDay(7, null, () -> {
-
             if (event.getEntity() instanceof WitherSkeleton) {
                 WitherSkeleton skeleton = (WitherSkeleton) event.getEntity();
 
-                // Equipar al Wither Skeleton con full Netherite
                 ItemStack helmet = new ItemStack(Material.NETHERITE_HELMET);
                 ItemStack chestplate = new ItemStack(Material.NETHERITE_CHESTPLATE);
                 ItemStack leggings = new ItemStack(Material.NETHERITE_LEGGINGS);
@@ -43,6 +43,12 @@ public class Day7 implements Listener {
                 skeleton.getEquipment().setLeggings(leggings);
                 skeleton.getEquipment().setBoots(boots);
                 skeleton.getEquipment().setItemInMainHand(sword);
+
+                skeleton.getEquipment().setHelmetDropChance(0f);
+                skeleton.getEquipment().setChestplateDropChance(0f);
+                skeleton.getEquipment().setLeggingsDropChance(0f);
+                skeleton.getEquipment().setBootsDropChance(0f);
+                skeleton.getEquipment().setItemInMainHandDropChance(0f);
             }
         });
     }
@@ -60,17 +66,20 @@ public class Day7 implements Listener {
             }
         });
     }
+
     @EventHandler
-    public void onCaveSpiderHit(EntityDamageByEntityEvent event) {
-        if (event.getDamager() instanceof CaveSpider) {
-            CaveSpider spider = (CaveSpider) event.getDamager();
-            if (event.getEntity() instanceof Player) {
-                Player player = (Player) event.getEntity();
-                spider.setVelocity(player.getLocation().toVector().subtract(spider.getLocation().toVector()).normalize().multiply(2));
-                event.setDamage(10);
+    public void onCaveSpiderTarget(EntityTargetEvent event) {
+        Utils.onDay(7, null, () -> {
+            if (event.getEntity().getType() == EntityType.CAVE_SPIDER) {
+                CaveSpider caveSpider = (CaveSpider) event.getEntity();
+                if (random.nextInt(2) == 0) {
+                    caveSpider.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 40, 4)); // 40 ticks = 2 segundos
+                }
             }
-        }
+        });
     }
+
+
     @EventHandler
     public void onStrayArrowHit(EntityDamageByEntityEvent event) {
         Utils.onDay(7, null, () -> {
