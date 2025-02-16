@@ -31,4 +31,34 @@ public class ItemGlobal {
         builder.addLore(loreBuilder.generateLore().toArray(new String[0]));
         return builder.build();
     }
+    public static ItemStack totemdepesadillascongeladasxdxd() {
+        ItemBuilder builder = new ItemBuilder(Material.TOTEM_OF_UNDYING)
+                .setDisplayName(Utils.ib(new Color(0, 201, 246), new Color(5, 112, 111), "&lTótem Pesadillas Congeladas"))
+                .setAmount(1)
+                .addItemFlags(ItemFlag.HIDE_UNBREAKABLE, ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_ENCHANTS)
+                .setCustomModelData(1)
+                .addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 1)
+                .setUnbreakable(true);
+        LoreBuilder loreBuilder = new LoreBuilder();
+        loreBuilder.setItem(builder.build());
+        loreBuilder.setDescription("&3Te hace inmune durante 4 segundos");
+        loreBuilder.setObtainTime(true);
+        builder.addLore(loreBuilder.generateLore().toArray(new String[0]));
+        return builder.build();
+    }
+    public static ItemStack heladodepepesadillas() {
+        ItemBuilder builder = new ItemBuilder(Material.YELLOW_DYE)
+                .setDisplayName(Utils.ib(new Color(0, 201, 246), new Color(5, 112, 111), "&lHelado de Pesadillas"))
+                .setAmount(1)
+                .addItemFlags(ItemFlag.HIDE_UNBREAKABLE, ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_ENCHANTS)
+                .setCustomModelData(1)
+                .addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 1)
+                .setUnbreakable(true);
+        LoreBuilder loreBuilder = new LoreBuilder();
+        loreBuilder.setItem(builder.build());
+        loreBuilder.setDescription("&3Te hace inmune durante 4 segundos");
+        loreBuilder.setObtainTime(true);
+        builder.addLore(loreBuilder.generateLore().toArray(new String[0]));
+        return builder.build();
+    }
 }

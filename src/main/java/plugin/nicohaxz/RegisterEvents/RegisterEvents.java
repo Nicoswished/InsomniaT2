@@ -4,8 +4,11 @@ import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
 import plugin.nicohaxz.Controller.StormController;
 import plugin.nicohaxz.Days.*;
+import plugin.nicohaxz.GameEvent.ChatEvent;
 import plugin.nicohaxz.GameEvent.DeathEvent;
+import plugin.nicohaxz.GameEvent.JoinEvent;
 import plugin.nicohaxz.GameEvent.TotemListener;
+import plugin.nicohaxz.Items.Function.GlobalItemFuntion;
 import plugin.nicohaxz.main;
 
 public class RegisterEvents {
@@ -17,6 +20,9 @@ public class RegisterEvents {
                     new TotemListener(),
                     new SpawnMobsDays(),
                     new MobCapDay10(),
+                    new ChatEvent(),
+                    new JoinEvent(),
+                    new GlobalItemFuntion(),
                     new Day0(),
                     new Day1(),
                     new Day2(),
@@ -30,14 +36,20 @@ public class RegisterEvents {
                     new Day12(),
                     new Day13(),
                     new Day14(),
-                    new Day16()
+                    new Day16(),
+                    new Day17(),
+                    new Day19(),
+                    new Day20()
 
 
 
 
 
 
-                    );
+
+
+
+            );
         }
 
         private static void registerListeners(Listener... listeners) {

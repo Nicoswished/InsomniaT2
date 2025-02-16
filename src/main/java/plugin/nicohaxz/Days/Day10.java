@@ -2,6 +2,7 @@ package plugin.nicohaxz.Days;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.SoundCategory;
 import org.bukkit.block.data.type.TNT;
 import org.bukkit.entity.Animals;
 import org.bukkit.entity.Enderman;
@@ -68,8 +69,8 @@ public class Day10 implements Listener {
     }
 
     private void showChallenge(Player player) {
-        char randomChar = (char) ('A' + random.nextInt(26));
-        activeChallenges.put(player, randomChar);
+        char randomChar1 = (char) ('A' + random.nextInt(26));
+        String challenge = "" + randomChar1;
         titleVisible.put(player, true);
 
         new BukkitRunnable() {
@@ -81,20 +82,21 @@ public class Day10 implements Listener {
                     startTimer(player);
                     return;
                 }
-                player.sendTitle(ChatColor.RED + "挑战", "Escribe esta letra: " + randomChar, 0, 20, 0);
+                player.sendTitle(
+                        ChatColor.RED + "挑",
+                        "Escribe estas letras: " + challenge,
+                        0,
+                        500,
+                        500
+                );
             }
         }.runTaskTimer(plugin, 0, 20);
-
-        new BukkitRunnable() {
+        new BukkitRunnable(){
             @Override
-            public void run() {
-                if (!titleVisible.getOrDefault(player, false)) {
-                    this.cancel();
-                    return;
-                }
+            public void run(){
                 player.playSound(player.getLocation(), "minecraft:insomnia.anuncios", 1.0F, 1.0F);
             }
-        }.runTaskTimer(plugin, 0, 300L);
+        }.runTaskTimer(main.getInstance(),0,380L);
     }
 
     @EventHandler
@@ -106,7 +108,8 @@ public class Day10 implements Listener {
                 if (event.getMessage().equalsIgnoreCase(String.valueOf(expectedChar))) {
                     activeChallenges.remove(player);
                     titleVisible.put(player, false);
-                    player.sendMessage(ChatColor.GREEN + "¡Correcto! Reiniciando el ciclo...");
+                    player.sendMessage(ChatColor.GREEN + "¡Correcto! Reiniciando PC!");
+                    player.stopSound("minecraft:insomnia.anuncios");
                 } else {
                     player.sendMessage(ChatColor.RED + "¡Incorrecto! Intenta de nuevo.");
                 }

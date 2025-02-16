@@ -44,9 +44,9 @@ public class Day15 implements Listener {
                 } else {
                     this.cancel();
                     if (random.nextInt(2) == 0) {
-                        showChallenge(player);
+                        Challenge(player);
                     } else {
-                        player.sendMessage(ChatColor.YELLOW + "Nada ocurrió esta vez. Espera el próximo ciclo.");
+                        player.sendMessage(ChatColor.YELLOW + "¡El Anuncio se saturo, más cuidado para la proxima!");
                         startTimer(player);
                     }
                 }
@@ -54,7 +54,7 @@ public class Day15 implements Listener {
         }.runTaskTimer(plugin, 0, 20);
     }
 
-    private void showChallenge(Player player) {
+    private void Challenge(Player player) {
         char randomChar1 = (char) ('A' + random.nextInt(26));
         char randomChar2 = (char) ('A' + random.nextInt(26));
         String challenge = "" + randomChar1 + randomChar2;
@@ -62,6 +62,7 @@ public class Day15 implements Listener {
         activeChallenges.put(player, challenge);
         titleVisible.put(player, true);
 
+        // Mostrar el título
         new BukkitRunnable() {
             @Override
             public void run() {
@@ -84,15 +85,23 @@ public class Day15 implements Listener {
         new BukkitRunnable() {
             @Override
             public void run() {
-                if (!titleVisible.getOrDefault(player, false)) {
+                anuncioslolxd(player);
+            }
+        }.runTaskLater(plugin, 20);
+    }
+
+    private void anuncioslolxd(Player player) {
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                if (!activeChallenges.containsKey(player)) {
                     this.cancel();
                     return;
                 }
                 player.playSound(player.getLocation(), "minecraft:insomnia.anuncios", 1.0F, 1.0F);
             }
-        }.runTaskTimer(plugin, 0, 300L);
+        }.runTaskTimer(plugin, 0, 380L);
     }
-
     @EventHandler
     public void onPlayerChat(AsyncPlayerChatEvent event) {
         Player player = event.getPlayer();
@@ -102,6 +111,7 @@ public class Day15 implements Listener {
                 activeChallenges.remove(player);
                 titleVisible.put(player, false);
                 player.sendMessage(ChatColor.GREEN + "¡Correcto! Reiniciando el ciclo...");
+                player.stopSound("minecraft:insomnia.anuncios");
             } else {
                 player.sendMessage(ChatColor.RED + "¡Incorrecto! Intenta de nuevo.");
             }

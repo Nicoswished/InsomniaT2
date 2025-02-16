@@ -23,13 +23,14 @@ public class Task {
                 for (Player pl : Bukkit.getOnlinePlayers()) {
                     int c = Bukkit.getMaxPlayers();
                     int c1 = Bukkit.getOnlinePlayers().size();
+                    String t = Ranks.getPrefix(pl);
                     pl.setPlayerListHeaderFooter(
-                            Utils.c(""
+                            Utils.c("<GRADIENT:ed3619>&l>≪ ≪ ◦•❖•◦ ≫ ≫ ≪•◦ ✦ ◦•≫ ≪ ≪</GRADIENT:6f6564>\n"
                                     + Utils.getPrefix()),
                             Utils.c(
                                     "<SOLID:35ed4e>Jugadores Conectados: &7" + c1 + " / " + c + "\n"
                                             + "<SOLID:35ed4e>Ping: &7" + pl.getPing() + "ms\n"
-                                            + "<SOLID:35ed4e>Día Actual: &6" + getDay() + "\n"
+                                            + "<SOLID:35ed4e>Día Actual: &6" + getDay() + "\n" + "<GRADIENT:ed3619>&l≪ ≪ ◦•❖•◦ ≫ ≫ ≪•◦ ✦ ◦•≫ ≪ ≪</GRADIENT:6f6564>"
                             )
                     );
                 }

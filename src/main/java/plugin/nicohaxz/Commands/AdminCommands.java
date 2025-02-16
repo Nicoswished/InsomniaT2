@@ -12,9 +12,7 @@ import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import plugin.nicohaxz.Items.ItemGlobal;
-import plugin.nicohaxz.Utils.ConfigData;
-import plugin.nicohaxz.Utils.StormUtils;
-import plugin.nicohaxz.Utils.Utils;
+import plugin.nicohaxz.Utils.*;
 
 import static plugin.nicohaxz.Utils.Utils.chatcolor;
 
@@ -88,7 +86,7 @@ public class AdminCommands extends BaseCommand {
         }
     }
     @Subcommand("item")
-    @CommandCompletion("cafeina|@nothing")
+    @CommandCompletion("cafeina|totempesadillas|helaodepepesadillas|@nothing")
     public void item(Player sender, String[] args) {
         if (args.length == 0) {
             sender.sendMessage(command("&eUso correcto del comando: &f/twi item <item> <cantidad>"));
@@ -123,6 +121,8 @@ public class AdminCommands extends BaseCommand {
         item.setItemStack(defaultItem);
         switch (args[0].toLowerCase()) {
             case "cafeina" -> registerItem(sender, item, ItemGlobal.Cafeina(), cantidad, isLast);
+            case "totempesadillas" -> registerItem(sender, item, ItemGlobal.totemdepesadillascongeladasxdxd(), cantidad, isLast);
+            case "helaodepepesadillas" -> registerItem(sender, item, ItemGlobal.heladodepepesadillas(), cantidad, isLast);
 
             default -> registerItem(sender, item, defaultItem, cantidad, isLast);
         }
@@ -136,6 +136,20 @@ public class AdminCommands extends BaseCommand {
             sender.sendMessage(command("&eItem dado: &r&l" + itemToGive.getItemMeta().getDisplayName() + " &ex" + cantidad));
         }
     }
-
+    @Subcommand("rank")
+    @CommandCompletion("@rankList @players @nothing")
+    public void setRank(Player sender, String[] args) {
+        if (args.length == 0) return;
+        try {
+            Player target = Bukkit.getPlayer(args[1]);
+            assert target != null;
+            PlayerData.setPlayerData(target, "rank", args[0]);
+            sender.sendMessage(chatcolor("&aTu rango ha sido cambiado a &r" + Ranks.getRank(target) + "&a."));
+            Ranks.setRank(target);
+        } catch (Exception e) {
+            sender.sendMessage(chatcolor("&cError en el comando."));
+            sender.sendMessage(chatcolor("&c/insomnia rank <rango> <jugador>"));
+        }
+    }
 }
 

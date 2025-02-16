@@ -9,6 +9,7 @@ import org.bukkit.boss.BarStyle;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -67,7 +68,7 @@ import java.util.Random;
                         }
                     }
                 }
-            }.runTaskTimer(plugin, 0, 20); // Runs every second
+            }.runTaskTimer(plugin, 0, 20);
         }
 
         private void updateCaffeineBar() {
@@ -76,17 +77,32 @@ import java.util.Random;
         }
 
         private void applyFatigue(Player player) {
-            player.damage(1);
+            if (!player.isDead()) {
+                player.damage(1);
+            }
 
-            if (!player.getInventory().isEmpty()) {
-                player.getInventory().forEach(item -> {
-                    if (item != null) {
+            ItemStack[] items = player.getInventory().getContents();
+            player.getInventory().clear();
+
+            new BukkitRunnable() {
+                int index = 0;
+
+                @Override
+                public void run() {
+                    if (index >= items.length) {
+                        this.cancel();
+                        return;
+                    }
+
+                    ItemStack item = items[index];
+                    if (item != null && item.getType() != Material.AIR) {
                         player.getWorld().dropItemNaturally(player.getLocation(), item);
                     }
-                });
-                player.getInventory().clear();
-            }
+                    index++;
+                }
+            }.runTaskTimer(plugin, 0L, 10L);
         }
+
 
         private void applyStress(Player player) {
             stressLevels.put(player, 300);
@@ -112,12 +128,16 @@ import java.util.Random;
         }
 
         private void applyAnxiety(Player player) {
-            player.addPotionEffect(new PotionEffect(PotionEffectType.CONFUSION, 3600, 0));
-            player.addPotionEffect(new PotionEffect(PotionEffectType.WEAKNESS, 3600, 0));
-            player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 3600, 0));
+            int durationTicks = 138 * 20;
+
+            player.addPotionEffect(new PotionEffect(PotionEffectType.CONFUSION, durationTicks, 0));
+            player.addPotionEffect(new PotionEffect(PotionEffectType.WEAKNESS, durationTicks, 0));
+            player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, durationTicks, 0));
+
+            player.playSound(player.getLocation(), "minecraft:insomnia.ansiedad", 1.0F, 1.0F);
 
             new BukkitRunnable() {
-                private int anxietyCounter = 180;
+                private int anxietyCounter = 138;
 
                 @Override
                 public void run() {
@@ -130,6 +150,7 @@ import java.util.Random;
                 }
             }.runTaskTimer(plugin, 0, 20);
         }
+
 
         private void duplicatePlayer(Player player) {
         }
@@ -144,7 +165,18 @@ import java.util.Random;
                 bossBar.setProgress(1.0);
             }
         }
+
+        @EventHandler
+        public void onPlayerDamage(EntityDamageByEntityEvent event) {
+            Utils.onDay(17, null, () -> {
+                if (event.getEntity() instanceof Player) {
+                    Player player = (Player) event.getEntity();
+                    bossBar.setProgress(-2.0);
+                }
+            });
+        }
     }
+
 
 
 

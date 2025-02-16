@@ -30,7 +30,7 @@ public class Day2 implements Listener {
     }
     @EventHandler
     public void onSkeletonSpawn(EntitySpawnEvent event) {
-        Utils.onDay(0, null, () -> {
+        Utils.onDay(2, null, () -> {
             if (event.getEntity() instanceof Skeleton) {
                 Skeleton skeleton = (Skeleton) event.getEntity();
                 ItemStack bow = new ItemStack(Material.BOW);
