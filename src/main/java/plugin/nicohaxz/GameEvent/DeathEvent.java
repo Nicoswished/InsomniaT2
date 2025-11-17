@@ -39,21 +39,33 @@ public class DeathEvent implements Listener {
 
             pl.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 100, 0));
             pl.addPotionEffect(new PotionEffect(PotionEffectType.CONFUSION, 200, 0));
+            pl.sendMessage(Utils.c(
+                    "<GRADIENT:3a7bd5> ──────────────────────────── </GRADIENT:00d4ff>"
+            ));
+            pl.sendMessage(Utils.c(
+                    "<GRADIENT:3a7bd5> ⚠ Un alma ha caído en las tierras heladas...</GRADIENT:00d4ff>"
+            ));
 
-            pl.sendMessage(Utils.chatcolor(
-                    "<GRADIENT:3a7bd5:00d4ff>&l⚠ Un alma ha caído en las tierras heladas...</GRADIENT:3a7bd5>"));
+            pl.sendMessage(Utils.c(
+                    "&7&lCausa: <GRADIENT:3a7bd5> " +
+                            Utils.getCustomCause(Objects.requireNonNull(p.getLastDamageCause()), "") +
+                            "</GRADIENT:00d4ff>"
+            ));
 
-            pl.sendMessage(Utils.chatcolor("&7&lCausa: &b" +
-                    Utils.getCustomCause(Objects.requireNonNull(p.getLastDamageCause()), "<SOLID:00d4ff>")));
+            pl.sendMessage(Utils.c("&7&lÚltimas palabras:"));
+            pl.sendMessage(Utils.c(
+                    "<GRADIENT:3a7bd5> " + PlayerData.getDeathMessage(p) + "\"</GRADIENT:00d4ff>"
+            ));
 
-            pl.sendMessage(Utils.chatcolor("&7&lÚltimas palabras:"));
-            pl.sendMessage(Utils.chatcolor("&7&o\"" + PlayerData.getDeathMessage(p) + "\""));
+            pl.sendMessage(Utils.c(
+                    "&7&lÚltima posición: <GRADIENT:3a7bd5>" +
+                            Utils.getLocationString(p.getLocation()) +
+                            "</GRADIENT:00d4ff>"
+            ));
 
-            pl.sendMessage(Utils.chatcolor("&7&lÚltima posición: &b" +
-                    Utils.getLocationString(p.getLocation())));
-
-            pl.sendMessage(Utils.chatcolor(
-                    "<GRADIENT:3a7bd5:00d4ff>&l────────────────────────────</GRADIENT:00d4ff>"));
+            pl.sendMessage(Utils.c(
+                    "<GRADIENT:3a7bd5> ──────────────────────────── </GRADIENT:00d4ff>"
+            ));
         }
     }
 
