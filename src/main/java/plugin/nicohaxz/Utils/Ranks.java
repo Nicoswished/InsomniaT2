@@ -58,11 +58,11 @@ public class Ranks {
 
     public enum Rangos{
 
-        ADMIN(c("\uFA01"), "01"),
-        DEV(c("\uFA02 "), "02"),
-        HOST(c("\uFA03 "), "03"),
-        MOD(c("\uFA04"), "04"),
-        USER(c("\uFA11 "), "05");
+        ADMIN(c("<GRADIENT:f12711>&lAdmin </GRADIENT:f5af19>\n"), "01"),
+        DEV(c("<GRADIENT:00c6ff>&lDeveloper </GRADIENT:0072ff>\n"), "02"),
+        HOST(c("<GRADIENT:ff9a9e>&lHost </GRADIENT:fad0c4>\n"), "03"),
+        MOD(c("<GRADIENT:8E2DE2>&lModerador </GRADIENT:4A00E0>"), "04"),
+        USER(c("<GRADIENT:11998e>&lMiembro </GRADIENT:38ef7d>\n"), "05");
 
         private final String prefix;
         private final String priority;

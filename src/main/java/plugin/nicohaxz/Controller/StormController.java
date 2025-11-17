@@ -12,153 +12,223 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
-import plugin.nicohaxz.Utils.StormUtils;
+import plugin.nicohaxz.Utils.PDC;
 import plugin.nicohaxz.Utils.Utils;
-import plugin.nicohaxz.main;
 
 public class StormController implements Listener {
-    private int remainingTimeInSeconds;
-    private final long interval = 12000;
-    private long maxDuration = 0;
-    private final main main;
-    public StormController(main main) {
-        this.main = main;
+    public static JavaPlugin plugin;
+
+    public static long timeLeftInSeconds = 0;
+    public static long totalDuration = 0;
+
+    public static BukkitRunnable countdownTask;
+
+    public static World stormWorld;
+
+    public static boolean pendingStart = false;
+    public static long pendingDuration = 0;
+    public static boolean pendingReload = false;
+
+    public StormController(JavaPlugin plugin) {
+        StormController.plugin = plugin;
+        Bukkit.getPluginManager().registerEvents(this, plugin);
     }
 
-    @EventHandler
-    public void DeathEvent(PlayerDeathEvent event) {
-        Bukkit.getScheduler().runTaskLater(plugin.nicohaxz.main.getInstance(), () -> {
-            for (Player pl : Bukkit.getOnlinePlayers()) {
-                pl.playSound(pl.getLocation(), Sound.AMBIENT_CAVE, 100, 0);
-                TormentaCountdown(pl, false);
-                int maxValue = StormUtils.getMaxValue(pl);
-                int duration = StormUtils.getDuration(pl);
-                pl.sendTitle(Utils.c("<GRADIENT:06def4>&lFreeze Moon</GRADIENT:09909e>"),
-                        Utils.c("&5&l Duración: " + duration), 100, 20, 100);
 
-                System.out.println("Valor máximo de la tormenta: " + maxValue);
-            }
-        }, 180L);
-    }
+    public static void startStorm(long duration, boolean reloadCause) {
 
-    @EventHandler
-    public void UHCEvent(PlayerDeathEvent e) {
-        Utils.onDay(10, null, () -> {
-            Bukkit.getScheduler().runTaskLater(plugin.nicohaxz.main.getInstance(), () -> {
-                for (Player pl : Bukkit.getOnlinePlayers()) {
-                    pl.getWorld().setGameRule(GameRule.NATURAL_REGENERATION, false);
-                    pl.sendMessage(Utils.c("<GRADIENT:06def4>MODO UHC ACTIVADO</GRADIENT:09909e>"));
-                }
-            }, 180L);
-        });
-    }
+        stormWorld = Bukkit.getWorld("world");
 
-    public void TormentaCountdown(Player pl, Boolean isReloadCause) {
-        pl.getWorld().setGameRule(GameRule.DO_DAYLIGHT_CYCLE, false);
-        setMoonToMidnight(pl.getWorld());
+        if (stormWorld == null) return;
 
-        if (isReloadCause) {
-            if (remainingTimeInSeconds > 0) {
-                startCountdown();
-            }
-        } else {
-            if (remainingTimeInSeconds == 0) {
-                remainingTimeInSeconds = (int) interval;
-                maxDuration = interval;
-                StormUtils.setDuration(pl, remainingTimeInSeconds);
-                StormUtils.setMaxValue(pl, (int) maxDuration);
-                startCountdown();
+        stormWorld.setGameRule(GameRule.DO_DAYLIGHT_CYCLE, false);
+        stormWorld.setTime(18000);
+
+        if (reloadCause) {
+            startCountdown();
+            if (duration > PDC.getTormentMax()) {
+                timeLeftInSeconds = 0;
+                totalDuration = 1;
             } else {
-                remainingTimeInSeconds += 2000;
-                maxDuration += 2000;
-                StormUtils.setDuration(pl, remainingTimeInSeconds);
-                StormUtils.setMaxValue(pl, (int) maxDuration);
+                timeLeftInSeconds = duration;
+                totalDuration = PDC.getTormentMax();
             }
+            return;
+        }
+
+        if (!isStormActive()) {
+            timeLeftInSeconds = duration;
+            totalDuration = duration;
+            startCountdown();
+        } else {
+            addTime(duration);
         }
     }
 
-    private void setMoonToMidnight(World world) {
-        BukkitRunnable task = new BukkitRunnable() {
-            final long targetTime = 18000;
-            final long steps = 6 * 20;
-            long increment = (targetTime - world.getTime()) / steps;
-            int counter = 0;
+
+    public static synchronized void deferStart(long duration, boolean reloadCause) {
+        if (!Bukkit.getOnlinePlayers().isEmpty()) {
+            startStorm(duration, reloadCause);
+            return;
+        }
+
+        pendingStart = true;
+        pendingDuration = duration;
+        pendingReload = reloadCause;
+    }
+
+
+    public static boolean isStormActive() {
+        return countdownTask != null && !countdownTask.isCancelled();
+    }
+
+
+
+    public static synchronized void startCountdown() {
+
+        if (countdownTask != null)
+            countdownTask.cancel();
+
+        countdownTask = new BukkitRunnable() {
 
             @Override
             public void run() {
-                if (counter >= steps || world.getTime() == targetTime) {
-                    world.setTime(targetTime);
+
+                if (timeLeftInSeconds <= 0) {
+                    stopStorm();
                     cancel();
-                } else {
-                    world.setTime(world.getTime() + increment);
-                    counter++;
+                    return;
                 }
+
+                timeLeftInSeconds--;
+
+                sendActionBarToPlayers();
             }
         };
-        task.runTaskTimer(plugin.nicohaxz.main.getInstance(), 20L, 1L);
+
+        countdownTask.runTaskTimer(plugin, 0L, 20L);
     }
 
-    public void startCountdown() {
-        BukkitRunnable task = new BukkitRunnable() {
-            @Override
-            public void run() {
-                if (remainingTimeInSeconds <= 0) {
-                    World world = Bukkit.getWorld("world");
-                    if (world != null) {
-                        world.setGameRule(GameRule.DO_DAYLIGHT_CYCLE, true);
-                    }
-                    for (Player pl : Bukkit.getOnlinePlayers()) {
-                        pl.sendMessage(Utils.c("<GRADIENT:06def4>&lFreeze Moon ha terminado</GRADIENT:09909e>"));
-                        pl.getWorld().setGameRule(GameRule.NATURAL_REGENERATION, true);
-                        StormUtils.setDuration(pl, 0);
-                        StormUtils.setMaxValue(pl, 0);
-                    }
 
-                    remainingTimeInSeconds = 0;
-                    maxDuration = 0;
-                    cancel();
-                } else {
-                    for (Player pl : Bukkit.getOnlinePlayers()) {
-                        String mensaje = IridiumColorAPI.process("<GRADIENT:06def4>&lFreeze Moon: </GRADIENT:09909e>"
-                                + "<GRADIENT:3aa2f4>" + Timer(remainingTimeInSeconds) + "</GRADIENT:0890fa>");
-                        pl.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 20, 0));
-                        pl.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(mensaje));
-                    }
-                    remainingTimeInSeconds--;
-                }
-            }
-        };
-        task.runTaskTimer(plugin.nicohaxz.main.getInstance(), 20L, 20L);
+
+
+    public static void sendActionBarToPlayers() {
+
+        String bar = IridiumColorAPI.process(
+                "<GRADIENT:06def4>&lFreeze Moon </GRADIENT:09909e>" +
+                        "<GRADIENT:3aa2f4>" + Timer((int) timeLeftInSeconds) + "</GRADIENT:0890fa>"
+        );
+
+        for (Player p : Bukkit.getOnlinePlayers()) {
+            p.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 40, 0));
+            p.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(bar));
+        }
     }
+
+
+
+
+    public static void stopStorm() {
+
+        if (stormWorld != null) {
+            stormWorld.setGameRule(GameRule.DO_DAYLIGHT_CYCLE, true);
+            stormWorld.setTime(0);
+        }
+
+        if (countdownTask != null) {
+            countdownTask.cancel();
+            countdownTask = null;
+        }
+
+        for (Player p : Bukkit.getOnlinePlayers()) {
+            p.playSound(p.getLocation(), Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 2f, 0.5f);
+            p.sendMessage(Utils.c("<GRADIENT:06def4>&lFreeze Moon Finalizada</GRADIENT:09909e>"));
+        }
+    }
+
+
+
+    public static synchronized void addTime(long extraSeconds) {
+        timeLeftInSeconds += extraSeconds;
+        totalDuration += extraSeconds;
+    }
+
+
+    public static synchronized long removeTime(long seconds) {
+        timeLeftInSeconds = Math.max(0, timeLeftInSeconds - seconds);
+        totalDuration = Math.max(timeLeftInSeconds, totalDuration - seconds);
+
+        if (timeLeftInSeconds <= 0)
+            stopStorm();
+
+        return timeLeftInSeconds;
+    }
+
+
+    public static synchronized void setTime(long seconds) {
+        timeLeftInSeconds = Math.max(0, seconds);
+        totalDuration = Math.max(timeLeftInSeconds, totalDuration);
+
+        if (timeLeftInSeconds <= 0)
+            stopStorm();
+    }
+
+
+    public static long getTimeLeft() {
+        return timeLeftInSeconds;
+    }
+
 
     @EventHandler
-    public void JoinEvent(PlayerJoinEvent event) {
-        Player player = event.getPlayer();
-        if (StormUtils.getDuration(player) > 0) {
-            player.spigot().sendMessage(ChatMessageType.ACTION_BAR,
-                    TextComponent.fromLegacyText(Utils.c("<GRADIENT:06def4>&lFreeze Moon Activa</GRADIENT:09909e>")));
+    public void onJoin(PlayerJoinEvent e) {
+
+        if (pendingStart) {
+            pendingStart = false;
+            startStorm(pendingDuration, pendingReload);
+        }
+
+        if (isStormActive()) {
+            e.getPlayer().spigot().sendMessage(
+                    ChatMessageType.ACTION_BAR,
+                    TextComponent.fromLegacyText(Utils.c("<GRADIENT:06def4>&lFreeze Moon Activa</GRADIENT:09909e>"))
+            );
         }
     }
 
-    public String Timer(int t) {
-        int num = t, day, hor, min, seg;
-        day = num / (3600 * 24);
-        hor = (num % (3600 * 24)) / 3600;
-        min = (num % 3600) / 60;
-        seg = num % 60;
 
-        return String.format("%02d:%02d:%02d:%02d", day, hor, min, seg);
+    @EventHandler
+    public void onDeath(PlayerDeathEvent e) {
+
+        Bukkit.getScheduler().runTaskLater(plugin, () -> {
+
+            startStorm(1200, false);
+
+            for (Player p : Bukkit.getOnlinePlayers()) {
+
+                p.playSound(p.getLocation(), Sound.ENTITY_ELDER_GUARDIAN_CURSE, 2f, 0.5f);
+                p.sendTitle(
+                        Utils.c("<GRADIENT:06def4>&lFreeze Moon</GRADIENT:09909e>"),
+                        Utils.c("&7Duración: &b" + Timer((int) timeLeftInSeconds)),
+                        20, 100, 40
+                );
+
+            }
+
+        }, 400L);
+
     }
 
-    public int getRemainingTimeInSeconds() {
-        return remainingTimeInSeconds;
+    public static String Timer(int t) {
+
+        int h = (t % (3600 * 24)) / 3600;
+        int m = (t % 3600) / 60;
+        int s = t % 60;
+
+        return String.format("%02d:%02d:%02d", h, m, s);
     }
 
-    public void setRemainingTimeInSeconds(int remainingTimeInSeconds) {
-        this.remainingTimeInSeconds = remainingTimeInSeconds;
-    }
 }

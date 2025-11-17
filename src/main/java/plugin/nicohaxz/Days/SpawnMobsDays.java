@@ -9,25 +9,42 @@ import plugin.nicohaxz.Utils.Utils;
 
 public class SpawnMobsDays implements Listener {
 
-    //NO TOCAR spawn de los mobs normales y custom + modificados PURO NATA A LA VRG
-
+    //NO TOCAR spawn de los mobs normales y custom + modificados
 
     @EventHandler
     public void onSpawn(CreatureSpawnEvent e) {
-        Utils.onDay(15, null, () -> {
-            if (e.getEntity().getWorld().getName().equals("world")) {
-                if (e.getEntity().getType() == EntityType.CREEPER) {
-                    Creeper creeper = (Creeper) e.getEntity();
-                    if (!creeper.getScoreboardTags().contains("processed")) {
-                        creeper.addScoreboardTag("processed");
-                        Creeper miniCreeper = (Creeper) e.getEntity().getWorld().spawnEntity(creeper.getLocation(), EntityType.CREEPER);
-                        Creepers.MiniCreeper(miniCreeper);
-                        e.getEntity().remove();
-                    }
-                }
-            } else {
-                e.setCancelled(true);
-            }
+
+        if (!e.getEntity().getWorld().getName().equals("world")) {
+            e.setCancelled(true);
+            return;
+        }
+
+        if (e.getEntityType() != EntityType.CREEPER) {
+            return;
+        }
+
+        Utils.onDay(19, null, () -> {
+            return;
         });
+
+        Creeper creeper = (Creeper) e.getEntity();
+
+        if (creeper.getScoreboardTags().contains("processed")) {
+            return;
+        }
+
+        creeper.addScoreboardTag("processed");
+
+        Creeper miniCreeper = (Creeper) creeper.getWorld().spawnEntity(
+                creeper.getLocation(),
+                EntityType.CREEPER
+        );
+
+        miniCreeper.addScoreboardTag("processed");
+
+        Creepers.MiniCreeper(miniCreeper);
+
+        // 6. Remover el creeper original
+        creeper.remove();
     }
 }

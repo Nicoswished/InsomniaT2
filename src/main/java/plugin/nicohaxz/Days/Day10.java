@@ -83,7 +83,7 @@ public class Day10 implements Listener {
                     return;
                 }
                 player.sendTitle(
-                        ChatColor.RED + "挑",
+                        ChatColor.RED + "¡Anuncio!",
                         "Escribe estas letras: " + challenge,
                         0,
                         500,

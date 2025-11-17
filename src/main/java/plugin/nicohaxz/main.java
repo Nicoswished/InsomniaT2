@@ -3,17 +3,14 @@ package plugin.nicohaxz;
 import co.aikar.commands.BukkitCommandManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.NamespacedKey;
 import org.bukkit.World;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import plugin.nicohaxz.Commands.AdminCommands;
-import plugin.nicohaxz.Commands.FreezeMoonCommands;
 import plugin.nicohaxz.Controller.CafeinaController;
 import plugin.nicohaxz.Controller.StormController;
 import plugin.nicohaxz.Days.Day15;
 import plugin.nicohaxz.Days.Day18;
-import plugin.nicohaxz.Items.Function.GlobalItemFuntion;
 import plugin.nicohaxz.RegisterEvents.RegisterEvents;
 import plugin.nicohaxz.Utils.Ranks;
 import plugin.nicohaxz.Utils.Task;
@@ -21,7 +18,6 @@ import plugin.nicohaxz.Utils.Utils;
 
 public final class main extends JavaPlugin {
 
-    // Yo y los estaticos cuando:
     public static main plugin;
     public static main instance;
     public static World world = null;
@@ -46,23 +42,21 @@ public final class main extends JavaPlugin {
         fr3.tablistTask();
         Utils.taskDay();
         initCommand();
-        Utils.console(ChatColor.GREEN + ("INICIANDO INSOMNIA HMP T2 "));
-        Utils.console(ChatColor.YELLOW + ("PLUGIN BY KECHAKBOOM Y NICO PACK"));
-        Utils.console(ChatColor.RED + ("INICIADO CORRECTAMENTE !!!!"));
+        Utils.console(ChatColor.GREEN + ("InsomniaT2: Checkeando errores para un inicio correcto"));
+        Utils.console(ChatColor.YELLOW + ("InsomniaT2: Plugin By NicoHaxz"));
+        Utils.console(ChatColor.RED + ("InsomniaT2: Iniciado correctamente, enjoy :)"));
         // ESTO ES UN EVENTO PRIVADO NO VA RegisterEvents
         // ESTO ACA SE REGISTRAN LOS EVENTOS PRIVADOS APARTE
         Bukkit.getServer().getPluginManager().registerEvents(new Day15(this), this);
         Bukkit.getServer().getPluginManager().registerEvents(new Day18(this), this);
         Bukkit.getServer().getPluginManager().registerEvents(new StormController(this), this);
+        //estoy bien pendejo en fin mi yo del pasado programando esto era muy xd
 
 
     }
     public void initCommand () {
         final BukkitCommandManager commandManager = new BukkitCommandManager(this);
         commandManager.registerCommand(new AdminCommands());
-        commandManager.registerCommand(new FreezeMoonCommands(this, freezeMoonManager));
-        //rangos pero no los he echo hasta tener la textura
-        //But ya esta la textura xd
         commandManager.getCommandCompletions().registerAsyncCompletion("rankList", c -> Ranks.listaDeRangos());
     }
 

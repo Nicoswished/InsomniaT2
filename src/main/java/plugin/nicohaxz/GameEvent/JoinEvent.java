@@ -69,10 +69,9 @@ public class JoinEvent implements Listener {
                 for (Player pl : Bukkit.getOnlinePlayers()) {
                     pl.playSound(pl.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 10, 1.2F);
                 }
-                e.setJoinMessage(Utils.c("&8" + p.getName() + " &8Ha entrado por primera vez a twilight phase y ha recibido inmunidad por 5 minutos"));
                 p.playSound(p.getLocation(), Sound.ENTITY_WITHER_SPAWN, 10, 0.8F);
                 p.addPotionEffect(new PotionEffect(PotionEffectType.CONFUSION, 100, 0, false, false));
-                p.sendMessage(ChatColor.GOLD + "Bienvenido :D Hardcore by NicoHaxz and KechaKboom");
+                p.sendMessage(ChatColor.GOLD + "Bienvenido. Hardcore by NicoHaxz and Kechappu");
             }
 
             for (ItemStack material : p.getInventory().getContents()) {

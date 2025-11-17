@@ -50,10 +50,10 @@ public class TotemListener implements Listener {
                 Bukkit.getScheduler().runTaskLater(main.getInstance(), () -> {
                     player.setNoDamageTicks(80);
                     player.playSound(player.getLocation(), Sound.BLOCK_BEACON_ACTIVATE, 5.5F, 1.4F);
-                    player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 20 * 5, 1));  // Velocidad por 5 segundos
-                    player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 20 * 1, 1));  // Ceguera por 1 segundo
-                    player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 20 * 10, 1));  // Resistencia al daño por 10 segundos
-                    player.addPotionEffect(new PotionEffect(PotionEffectType.LEVITATION, 20 * 3, 4));  // Levitación por 3 segundos
+                    player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 20 * 5, 1));
+                    player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 20 * 1, 1));
+                    player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 20 * 10, 1));
+                    player.addPotionEffect(new PotionEffect(PotionEffectType.LEVITATION, 20 * 3, 4));
                 }, 20L);
             }
         }

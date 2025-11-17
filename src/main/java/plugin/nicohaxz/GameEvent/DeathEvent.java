@@ -32,18 +32,31 @@ public class DeathEvent implements Listener {
     @EventHandler
     public void DeathMessage(PlayerDeathEvent event) {
         Player p = event.getEntity();
+
         for (Player pl : Bukkit.getOnlinePlayers()) {
-            pl.playSound(p.getLocation(), "minecraft:insomnia.death", 1.0F, 1.0F);
+
+            pl.playSound(p.getLocation(), Sound.AMBIENT_CAVE, 1.0F, 0.6F);
+
             pl.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 100, 0));
             pl.addPotionEffect(new PotionEffect(PotionEffectType.CONFUSION, 200, 0));
-            pl.sendMessage(Utils.chatcolor("&7Causa: &c" + Utils.getCustomCause(Objects.requireNonNull(p.getLastDamageCause()), "<SOLID:7FFF00>")));
-            pl.sendMessage(Utils.chatcolor("&7Mensaje:"));
-            pl.sendMessage(Utils.chatcolor("&l&7" + '"' + PlayerData.getDeathMessage(p) + '"'));
-            pl.sendMessage(Utils.chatcolor("&7Coordenadas: &c" + Utils.getLocationString(p.getLocation())));
+
+            pl.sendMessage(Utils.chatcolor(
+                    "<GRADIENT:3a7bd5:00d4ff>&l⚠ Un alma ha caído en las tierras heladas...</GRADIENT:3a7bd5>"));
+
+            pl.sendMessage(Utils.chatcolor("&7&lCausa: &b" +
+                    Utils.getCustomCause(Objects.requireNonNull(p.getLastDamageCause()), "<SOLID:00d4ff>")));
+
+            pl.sendMessage(Utils.chatcolor("&7&lÚltimas palabras:"));
+            pl.sendMessage(Utils.chatcolor("&7&o\"" + PlayerData.getDeathMessage(p) + "\""));
+
+            pl.sendMessage(Utils.chatcolor("&7&lÚltima posición: &b" +
+                    Utils.getLocationString(p.getLocation())));
+
+            pl.sendMessage(Utils.chatcolor(
+                    "<GRADIENT:3a7bd5:00d4ff>&l────────────────────────────</GRADIENT:00d4ff>"));
         }
     }
 
-    // ESTO ES PARA EVITAR BUGS DE MUERTES EN EL VACIO KECHA X NADA DEL MUNDO TOQUES ESTA COSA
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent event) {
         if (event.getEntity().getLastDamageCause() != null &&

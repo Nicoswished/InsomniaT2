@@ -11,35 +11,93 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import plugin.nicohaxz.Controller.StormController;
 import plugin.nicohaxz.Items.ItemGlobal;
 import plugin.nicohaxz.Utils.*;
+
+import java.util.Arrays;
+import java.util.Locale;
+import java.util.logging.Level;
 
 import static plugin.nicohaxz.Utils.Utils.chatcolor;
 
 @CommandAlias("Insomnia|ins|staff")
 @CommandPermission("staff.admin")
 public class AdminCommands extends BaseCommand {
+
+
     private static String command(String s) {
         return Utils.c(Utils.getPrefix() + s);
     }
+
+
     @Subcommand("storm")
-    @CommandCompletion("set|reset <duration> @nothing")
-    @Syntax("<duración|reset>")
-    public void storm(Player player, String action, @Optional Integer duration) {
-        if (action.equalsIgnoreCase("set")) {
-            if (duration != null && duration > 0) {
-                StormUtils.setDuration(player, duration);
-                StormUtils.setMaxValue(player, duration);
-                player.sendMessage(chatcolor("&aSe estableció correctamente la duración de la tormenta a &c" + duration + " &asegundos."));
+    @CommandCompletion("set|remove <segundos>")
+    @Syntax("<set|remove> <segundos>")
+    @Description("Inicia o resta tiempo a la Corrupted")
+    public void stormCommandxd(Player player, String[] args) {
+        Bukkit.getLogger().info("[StormCmd] args: " + Arrays.toString(args));
+
+        if (args.length < 2) {
+            player.sendMessage("§cUso correcto: /storm <set|remove> <segundos>");
+            return;
+        }
+
+        String action = args[0].toLowerCase(Locale.ROOT);
+
+        try {
+            if (action.equals("set")) {
+                long tiempo;
+                try {
+                    tiempo = Long.parseLong(args[1]);
+                } catch (NumberFormatException nfe) {
+                    player.sendMessage("§cEl valor '" + args[1] + "' no es un número válido.");
+                    return;
+                }
+
+                boolean wasActive = StormController.isStormActive();
+
+                try {
+                    StormController.startStorm(tiempo, false);
+                    if (wasActive) {
+                        player.sendMessage("§aHas extendido la tormenta por " + tiempo + " segundos.");
+                    } else {
+                        player.sendMessage("§aHas iniciado una tormenta por " + tiempo + " segundos.");
+                    }
+                } catch (Exception e) {
+                    Bukkit.getLogger().log(Level.SEVERE, "Error al ejecutar stormController.startStorm", e);
+                    player.sendMessage("§cError al iniciar la tormenta. Mira la consola del servidor para más detalles.");
+                }
+
+            } else if (action.equals("remove")) {
+                long segundos;
+                try {
+                    segundos = Long.parseLong(args[1]);
+                } catch (NumberFormatException nfe) {
+                    player.sendMessage("§cEl valor '" + args[1] + "' no es un número válido.");
+                    return;
+                }
+
+                if (!StormController.isStormActive()) {
+                    player.sendMessage("§cNo hay una tormenta activa.");
+                    return;
+                }
+
+                try {
+                    long timeLeft = StormController.removeTime(segundos);
+                    player.sendMessage("§aHas restado " + segundos + " segundos. Tiempo restante: " + timeLeft + " segundos.");
+                } catch (Exception e) {
+                    Bukkit.getLogger().log(Level.SEVERE, "Error al ejecutar stormController.removeTime", e);
+                    player.sendMessage("§cError al restar tiempo. Mira la consola del servidor para más detalles.");
+                }
+
             } else {
-                player.sendMessage(chatcolor("&cPor favor, ingresa una duración válida en segundos."));
+                player.sendMessage("§cComando desconocido. Usa 'set' o 'remove'.");
             }
-        } else if (action.equalsIgnoreCase("reset")) {
-            StormUtils.setDuration(player, 0);
-            StormUtils.setMaxValue(player, 0);
-            player.sendMessage(chatcolor("&aLa tormenta ha sido detenida."));
-        } else {
-            player.sendMessage(chatcolor("&cUso incorrecto. Usa: /storm set <duración> o /storm reset"));
+
+        } catch (Exception e) {
+            Bukkit.getLogger().log(Level.SEVERE, "Error ejecutando /storm", e);
+            player.sendMessage("§cError en el comando. Revisa la consola del servidor.");
         }
     }
 

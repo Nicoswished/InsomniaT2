@@ -40,22 +40,12 @@ public class Utils {
         plugin = p;
     }
 
-    public static void saveDefaultConfig() {
-        if (plugin != null) {
-            File file = new File(plugin.getDataFolder(), "config.yml");
-        }
+
+    public static String chatColor(String message) {
+        return message.replace("&", "§");
     }
 
-    public static int genRandom(int numMin, int numMax) {
-        return (int) Math.floor(Math.random() * (numMax - numMin + 1) + numMin);
-    }
 
-    public static NamespacedKey Key(String Key) {
-        NamespacedKey key = new NamespacedKey(main.getInstance(), Key);
-        return key;
-    }
-
-    public static String Prefix = ChatColor("&6&l[PermaBro4]");
 
     public static String Timer(int Seconds, boolean IncludeDays) {
 
@@ -92,11 +82,6 @@ public class Utils {
 
     }
 
-    public static int NervsMax(Player p) {
-
-
-        return 120;
-    }
 
     public static String getCustomCause(EntityDamageEvent e, String s) {
         String reasonDeath = "Desconocido";
@@ -143,7 +128,7 @@ public class Utils {
                         LivingEntity et = (LivingEntity) ball.getShooter();
                         reasonDeath = "Explosión [" + et.getName() + "]";
                     } else {
-                        reasonDeath = Utils.ChatColor("Explosión [" + ((EntityDamageByEntityEvent) e).getDamager().getName() + "]");
+                        reasonDeath = Utils.chatColor("Explosión [" + ((EntityDamageByEntityEvent) e).getDamager().getName() + "]");
                     }
                 }
             }
@@ -165,10 +150,6 @@ public class Utils {
     }
 
     public static String chatcolor(String message) {
-        return message.replace("&", "§");
-    }
-
-    public static String ChatColor(String message) {
         return message.replace("&", "§");
     }
 
