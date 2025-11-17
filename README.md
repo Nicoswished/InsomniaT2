@@ -23,3 +23,10 @@ dándole vueltas.
 
 Que tengan una buena tarde o noche. Y tomen mis palabras como quieran…
 son simplemente lo que necesitaba decir.
+
+Gracias Kechappu por dejarme ayudarte en esto que aun que no se dio el proyecto por
+lo menos me ayudo mucho...
+
+Owner: Kechappu
+
+Dev: NicoHaxz
