@@ -18,6 +18,7 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import plugin.nicohaxz.Utils.PDC;
 import plugin.nicohaxz.Utils.Utils;
+import plugin.nicohaxz.main;
 
 public class StormController implements Listener {
     public static JavaPlugin plugin;
@@ -42,14 +43,11 @@ public class StormController implements Listener {
     public static void startStorm(long duration, boolean reloadCause) {
 
         stormWorld = Bukkit.getWorld("world");
-
         if (stormWorld == null) return;
 
         stormWorld.setGameRule(GameRule.DO_DAYLIGHT_CYCLE, false);
-        stormWorld.setTime(18000);
 
         if (reloadCause) {
-            startCountdown();
             if (duration > PDC.getTormentMax()) {
                 timeLeftInSeconds = 0;
                 totalDuration = 1;
@@ -57,18 +55,64 @@ public class StormController implements Listener {
                 timeLeftInSeconds = duration;
                 totalDuration = PDC.getTormentMax();
             }
-            return;
-        }
-
-        if (!isStormActive()) {
-            timeLeftInSeconds = duration;
-            totalDuration = duration;
-            startCountdown();
         } else {
-            addTime(duration);
+            if (!isStormActive()) {
+                timeLeftInSeconds = duration;
+                totalDuration = duration;
+            } else {
+                addTime(duration);
+            }
         }
-    }
 
+        animateSunToMoon(() -> {
+            startCountdown();
+
+        });
+    }
+    public static void animateSunToMoon(Runnable onFinish) {
+        World world = Bukkit.getWorld("world");
+        if (world == null) return;
+
+        long startTime = world.getTime();
+        long endTime = 18000;
+        long durationTicks = 120;
+        long[] progress = {0};
+
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                if (progress[0] >= durationTicks) {
+                    world.setTime(endTime);
+
+                    for (Player pl : Bukkit.getOnlinePlayers()) {
+                        pl.sendTitle(
+                                Utils.c("<GRADIENT:06def4>&lFreeze Moon</GRADIENT:09909e>"),
+                                Utils.c("&7Duración: &b" + Timer((int) timeLeftInSeconds)),
+                                20, 100, 40
+                        );
+
+                        pl.spigot().sendMessage(ChatMessageType.ACTION_BAR,
+                                new TextComponent(Utils.c(
+                                        "<GRADIENT:3a7bd5>La FreezeMoon se aproxima...</GRADIENT:00d4ff>"
+                                ))
+                        );
+
+                        pl.playSound(pl.getLocation(), Sound.AMBIENT_WARPED_FOREST_MOOD, 1f, 0.4f);
+                    }
+
+                    if (onFinish != null) onFinish.run();
+                    cancel();
+                    return;
+                }
+
+                double t = (double) progress[0] / durationTicks;
+                long currentTime = startTime + (long) ((endTime - startTime) * t);
+
+                world.setTime(currentTime);
+                progress[0]++;
+            }
+        }.runTaskTimer(main.getPlugin(main.class), 0L, 1L);
+    }
 
     public static synchronized void deferStart(long duration, boolean reloadCause) {
         if (!Bukkit.getOnlinePlayers().isEmpty()) {
@@ -134,23 +178,71 @@ public class StormController implements Listener {
 
     public static void stopStorm() {
 
-        if (stormWorld != null) {
-            stormWorld.setGameRule(GameRule.DO_DAYLIGHT_CYCLE, true);
-            stormWorld.setTime(0);
-        }
+        stormWorld = Bukkit.getWorld("world");
+        if (stormWorld == null) return;
 
-        if (countdownTask != null) {
-            countdownTask.cancel();
-            countdownTask = null;
-        }
+        stormWorld.setGameRule(GameRule.DO_DAYLIGHT_CYCLE, false);
 
-        for (Player p : Bukkit.getOnlinePlayers()) {
-            p.playSound(p.getLocation(), Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 2f, 0.5f);
-            p.sendMessage(Utils.c("<GRADIENT:06def4>&lFreeze Moon Finalizada</GRADIENT:09909e>"));
-        }
+        animateMoonToSun(() -> {
+
+            if (countdownTask != null) {
+                countdownTask.cancel();
+                countdownTask = null;
+            }
+
+        });
+    }
+
+    public static void animateTime(long startTime, long endTime, Runnable onFinish) {
+        World world = Bukkit.getWorld("world");
+        if (world == null) return;
+
+        long durationTicks = 120;
+        long[] progress = {0};
+
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                if (progress[0] >= durationTicks) {
+                    world.setTime(endTime);
+                    if (onFinish != null) onFinish.run();
+                    cancel();
+                    return;
+                }
+
+                double t = (double) progress[0] / durationTicks;
+                long currentTime = startTime + (long)((endTime - startTime) * t);
+
+                world.setTime(currentTime);
+                progress[0]++;
+            }
+        }.runTaskTimer(main.getPlugin(main.class), 0L, 1L);
     }
 
 
+    public static void animateMoonToSun(Runnable onFinish) {
+        World world = Bukkit.getWorld("world");
+        if (world == null) return;
+
+        long startTime = world.getTime();
+        long endTime = 0;
+        animateTime(startTime, endTime, () -> {
+
+            world.setGameRule(GameRule.DO_DAYLIGHT_CYCLE, true);
+
+            for (Player pl : Bukkit.getOnlinePlayers()) {
+                pl.sendTitle(
+                        Utils.c("<GRADIENT:06def4>&lFreeze Moon Finalizada</GRADIENT:09909e>"),
+                        Utils.chatcolor("&7La calma retorna al mundo..."),
+                        10, 30, 10
+                );
+
+                pl.playSound(pl.getLocation(), Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 2f, 0.7f);
+            }
+
+            if (onFinish != null) onFinish.run();
+        });
+    }
 
     public static synchronized void addTime(long extraSeconds) {
         timeLeftInSeconds += extraSeconds;
@@ -210,11 +302,6 @@ public class StormController implements Listener {
             for (Player p : Bukkit.getOnlinePlayers()) {
 
                 p.playSound(p.getLocation(), Sound.ENTITY_ELDER_GUARDIAN_CURSE, 2f, 0.5f);
-                p.sendTitle(
-                        Utils.c("<GRADIENT:06def4>&lFreeze Moon</GRADIENT:09909e>"),
-                        Utils.c("&7Duración: &b" + Timer((int) timeLeftInSeconds)),
-                        20, 100, 40
-                );
 
             }
 
